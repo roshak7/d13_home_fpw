@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    {% if created %}
+        <h2>Здравствуй, {{usr.first_name}} {{usr.last_name}}. Новая статья в твоём любимом разделе!</h2>
+    {% else %}
+        <h2>Здравствуй, {{usr.first_name}} {{usr.last_name}}. Cтатья в твоём любимом разделе отредактирована!</h2>
+    {% endif %}
+    <h4>{{ post.title }}</h4>
+    <p>{{ post.text|truncatechars:50 }}</p> <a href="{{ full_url }}{{ post.get_absolute_url }}">Статья</a>
+</body>
+</html>

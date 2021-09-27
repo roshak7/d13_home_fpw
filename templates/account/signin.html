@@ -1,0 +1,57 @@
+{% extends "flatpages/default.html" %}
+
+{% load account %}
+
+{% load crispy_forms_tags %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Пользователь" %}{% endblock %}
+
+{% block content %}
+{% user_display user as user_display %}
+<h1>{% blocktrans %} Вы вошли как: {{ user_display }} {% endblocktrans %}</h1>
+
+<div class="lead">Добро пожаловать на наш сайт, {{ user.first_name }} {{ user.last_name }}!!</div></br>
+
+<h4>Вы можете изменить:</h4>
+
+{% if user.is_authenticated %}
+<form method="POST">
+  {% csrf_token %}
+<!--  {{ form|crispy }}-->
+  <div class="row">
+    <div class="col-3">
+          {{ form.username|as_crispy_field }}
+    </div>
+    <div class="col-3">
+          {{ form.email|as_crispy_field }}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-3">
+          {{ form.first_name|as_crispy_field }}
+    </div>
+    <div class="col-9">
+          {{ form.last_name|as_crispy_field }}
+    </div>
+  </div>
+  <div class="d-grid gap-2 d-md-block">
+    <button class="btn btn-success" type="submit">{% trans 'Изменить' %}</button>
+  </div>
+</form></br>
+{% endif %}
+
+
+<form method="post" action="{% url 'account_logout' %}">
+  {% csrf_token %}
+  <div class="d-grid gap-2 d-md-block">
+  {% if is_not_author %}
+  <a class="btn btn-secondary" href="/users/upgrade/">Стать автором</a>
+  {% endif %}
+  <button class="btn btn-primary" type="submit">{% trans 'Выйти' %}</button>
+  </div>
+</form>
+
+
+{% endblock %}

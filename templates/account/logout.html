@@ -1,0 +1,23 @@
+{% extends "flatpages/default.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Выход" %}{% endblock %}
+
+{% block content %}
+<h1>{% trans "Выход" %}</h1>
+
+<p>{% trans 'Вы действительно хотите выйти из своей учетной записи?' %}</p>
+
+<form method="post" action="{% url 'account_logout' %}">
+  {% csrf_token %}
+  {% if redirect_field_value %}
+  <div class="mb-3">
+  <input type="hidden" class="form-control" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" id="{{ redirect_field_type }}{{ redirect_field_name}}"/>
+  </div>
+  {% endif %}
+  <button class="btn btn-primary" type="submit">{% trans 'Выйти' %}</button>
+</form>
+
+
+{% endblock %}

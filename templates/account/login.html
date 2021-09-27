@@ -1,0 +1,52 @@
+{% extends "flatpages/default.html" %}
+
+{% load static %}
+
+{% load i18n %}
+{% load account socialaccount %}
+
+{% load crispy_forms_tags %}
+
+{% block head_title %}{% trans "Вход/Регистрация" %}{% endblock %}
+
+{% block content %}
+
+<h1>{% trans "Вход/Регистрация" %}</h1>
+
+{% get_providers as socialaccount_providers %}
+
+{% if socialaccount_providers %}
+<p>{% blocktrans with site.name as site_name %}Пожалуйста войдите с помощью вашей учетной записи. Или
+  <a href="{{ signup_url }}">зарегистрируйтесь</a>.</br>
+Вы можете зарегистрироваться c помощью:{% endblocktrans %}</p>
+
+<div class="socialaccount_ballot">
+
+<!--  <ul class="socialaccount_providers list-group justify-content-between">-->
+<!--    {% include "socialaccount/snippets/provider_list.html" with process="login" %}-->
+<!--  </ul>-->
+  <div><a class="btn btn-secondary" href="{% provider_login_url 'google' method='oauth2' %}"><img src="{%static 'img/google-icon.svg' %}" width="16" height="16"> Google</a></div>
+
+  </br>
+  <div class="login-or">{% trans 'или если у вас есть уже учетная запись, то войти' %}</div>
+  </br>
+</div>
+
+{% include "socialaccount/snippets/login_extra.html" %}
+
+{% else %}
+<p>{% blocktrans %}Если у вас нет акаунта, пожалуйста
+<a href="{{ signup_url }}">зарегистрируйтесь</a> first.{% endblocktrans %}</p>
+{% endif %}
+<form class="login" method="POST" action="{% url 'account_login' %}">
+  {% csrf_token %}
+  {{ form.as_p }}
+  {% if redirect_field_value %}
+  <div class="mb-3">
+  <input type="hidden" class="form-control" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+  </div>
+  {% endif %}
+  <button class="primaryAction btn btn-primary" type="submit">{% trans "Войти" %}</button></br></br>
+  <a class="button secondaryAction" href="{% url 'account_reset_password' %}">{% trans "Забыли пароль?" %}</a>
+</form>
+{% endblock %}

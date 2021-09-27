@@ -1,0 +1,31 @@
+{% extends 'flatpages/default.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block title %} Product list {% endblock title %}
+
+{% block content %}
+<h3>Информация о новости</h3>
+<form method="POST">
+    {% csrf_token %}
+    <div class="row">
+      <div class="col-6">
+            {{ form.author|as_crispy_field }}
+      </div>
+      <div class="col-6">
+            {{ form.type|as_crispy_field }}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-9">
+            {{ form.title|as_crispy_field }}
+      </div>
+      <div class="col-3">
+            {{ form.category|as_crispy_field }}
+      </div>
+    </div>
+    {{ form.text|as_crispy_field }}
+
+    <input type="submit"  class="btn btn-success" value="Добавить новость">
+</form>
+{% endblock content %}

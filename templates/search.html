@@ -1,0 +1,106 @@
+<!--  наследуемся от шаблона default.html, который мы создавали ещё во времена flatpages -->
+{% extends 'flatpages/default.html' %}
+
+{% load custom_filters %} <!-- не забываем заранее загружать наши фильтры! -->
+{% load my_tags %}
+{% load crispy_forms_tags %}
+
+<!-- Название у нас будет news -->
+{% block title %}
+Search news
+{% endblock title %}
+
+<!-- В контенте на странице мы выводим все товары -->
+{% block content %}
+<h1>Новости ({{ news|length }})</h1>
+    <form method="GET">
+        <div class="form-group">
+            <div class="row">
+                <div class="col-4">
+                    {{ filter.form.author|as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ filter.form.title|as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ filter.form.date|as_crispy_field }}
+                </div>
+<!--                {{ filter.form|crispy }} &lt;!&ndash; Форму от фильтров за нас сделает django. А вот кнопку, увы придётся делать самому &ndash;&gt;-->
+<!--                <input type="submit" class="btn btn-primary btn-sm" value="Найти">-->
+            </div>
+            <input type="submit" class="btn btn-primary" value="Найти">
+        </div>
+    </form>
+
+    {% if news %} <!-- Выводим товары только если они есть с помощью тега if -->
+        <table class="table">
+            <thead>
+            <tr>
+                <th>
+                    Заголовок
+                </th>
+                <th>
+                    Дата публикации
+                </th>
+                <th>
+                    Краткое содержание
+                </th>
+                <th>
+                    Статья
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+        {% for post in news %} <!-- Для каждой новости будет генерироваться новая строчка, т.е. новый html код. При этом сам цикл работет точно также, как и в python. product — переменная цикла, т.е. наш товар взятый из общего списка -->
+            <tr>
+                <td>
+                    {{ post.title|censor }} <!-- не забываем что переменные в шаблоне ничем не отличаются от переменных в python. Здесь также можно получать доступ к полям класса. Например здесь мы выводим имя, в следующем столбце описание, и т.д.  -->
+                </td>
+                <td>
+                    {{ post.date_posted|date:'d M Y' }}
+                </td>
+                <td>
+                    {{ post.text|censor|truncatechars:50 }} <!-- дописываем специальный фильтр, чтобы ограничить количество символов до 20. Все остальные символы превратятся в многоточие. -->
+                </td>
+                <td>
+                    <a href="{% url 'news_detail' post.id %}">Перейти</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+        </table>
+    {% else %} <!-- Если товаров нет, то говорим что товаров нет ;) -->
+        <h2>Новостей нет!</h2>
+    {% endif %}
+    {% if is_paginated %}
+    <div class="pagination justify-content-center">
+        <!-- Если доступна предыдущая страница, то даём ссылку на неё и самую первую страницу -->
+        {% if page_obj.has_previous %}
+            <div class="page-item"><a class="page-link" href="?{% param_replace page=1 %}">Первая</a></div>
+            <div class="page-item"><a class="page-link" href="?{% param_replace page=page_obj.previous_page_number %}"><<<</a></div>
+        {% else %}
+            <div class="page-item disabled"><span class="page-link">Первая</span></div>
+            <div class="page-item disabled"><span class="page-link"><<<</span></div>
+        {% endif %}
+
+        <!-- Показываем только текущую страницу и ближайшие к ней, чтобы список не тянулся и не захламлял страницу -->
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+                <div class="page-item active"><a class="page-link">{{ num }}</a></div>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <div class="page-item"><a class="page-link" href="?{% param_replace page=num %}">{{ num }}</a></div>
+            {% endif %}
+        {% endfor %}
+
+        <!-- Если есть следующая страница, то даём ссылку на неё и на самую последнюю страницу -->
+        {% if page_obj.has_next %}
+            <div class="page-item"><a class="page-link" href="?{% param_replace page=page_obj.next_page_number %}">>>></a></div>
+            <div class="page-item"><a class="page-link" href="?{% param_replace page=paginator.num_pages %}">Последняя</a></div>
+        {% else %}
+            <div class="page-item disabled"><span class="page-link">>>></span></div>
+            <div class="page-item disabled"><span class="page-link">Последняя</span></div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+{% endblock content %}

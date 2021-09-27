@@ -1,0 +1,12 @@
+{% extends "flatpages/default.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Verify Your E-mail Address" %}{% endblock %}
+
+{% block content %}
+    <h1>{% trans "Подтвердите ваш E-mail адрес" %}</h1>
+
+    <p>{% blocktrans %}Мы отправили вам электронное письмо для проверки. Перейдите по предоставленной ссылке в письме, чтобы завершить процесс регистрации. Свяжитесь с нами, если вы не получите его в течение нескольких минут.{% endblocktrans %}</p>
+
+{% endblock %}
